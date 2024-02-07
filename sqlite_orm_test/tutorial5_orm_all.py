@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, delete
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, delete, select
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 
 '''
@@ -57,11 +57,22 @@ session.add(post2)
 session.commit()
 
 # 모든 사용자와 게시물 검색
-users = session.query(User).all()
+'''
+all() 사용시
+- ChunkedIteratorResult -> [(<__main__.User object at 0x000001954EDCB950>,)] 와 같이 list 형식으로 반환
+'''
+users = session.query(User).where(User.name != 'test').all()
 for user in users:
-    print(f"User: {user.name}")
     for post in user.posts:
-        print(f"    Post: {post.title} - {post.content}")
+        print(f"[test1][{user.name}] {post.title} - {post.content}")
+
+users = session.execute(select(User).where(User.name != 'test')).all()
+for user in users:
+    print(f'[test2] {user[0].name}')
+
+users = session.execute(select(User).where(User.posts.any(Post.title != 'test'))).all()
+for user in users:
+    print(f'[test2] {user[0].name}')
 
 # 삭제하기 (객체 사용)
 user = session.get(User, 1)
@@ -78,10 +89,3 @@ session.rollback()
 
 # 세션 닫기
 session.close()
-'''
-[session.close()]
-- 진행 중인 모든 트랜잭션을 취소하여 연결 풀에 대한 모든 연결 리소스를 해제 (rollback 효과)
-- Session에서 모든 개체이 detached됨
-- expire_on_commit=False 로 detached 되지 않도록 함
-    - with Session(self.engine, expire_on_commit=False) as session:
-'''

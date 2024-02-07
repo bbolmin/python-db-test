@@ -1,4 +1,11 @@
-pip install sqlite3
-pip install sqlalchemy
+### [Sqlite ORM]
+----
 
-https://soogoonsoogoonpythonists.github.io/sqlalchemy-for-pythonist/tutorial/
+#### package
+```
+pip install sqlalchemy
+```
+
+#### reference
+- https://soogoonsoogoonpythonists.github.io/sqlalchemy-for-pythonist/tutorial/
+

@@ -26,7 +26,18 @@ session.add(user1) # 동일 객체를 여러번 add 해도 하나만 반영됨
 session.commit()
 print(user1 in session) #True
 print(user1.__dict__) #{'_sa_instance_state': <sqlalchemy.orm.state.InstanceState object at 0x00000225AB431010>, 'name': 'John'}
-session.close() #close()로 인해 user1은 detach됨
+session.close()
+
+'''
+[session.close()]
+- 진행 중인 모든 트랜잭션을 취소하여 연결 풀에 대한 모든 연결 리소스를 해제 (rollback 효과)
+- Session에서 모든 개체이 detached됨
+- expire_on_commit=False 로 detached 되지 않도록 함
+    - with Session(self.engine, expire_on_commit=False) as session:
+'''
+
+###############################################################################
+# 위에서 session.close()로 인해 user1은 detach됨
 
 session = Session()
 # user1은 detach된 상태 (user1.name 와 같은 조회 불가)
